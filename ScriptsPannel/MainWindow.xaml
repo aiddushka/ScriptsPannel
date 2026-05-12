@@ -1,0 +1,130 @@
+<Window x:Class="ScriptsPannel.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:ScriptsPannel.ViewModels"
+        xmlns:v="clr-namespace:ScriptsPannel.Views"
+        mc:Ignorable="d"
+        Title="{DynamicResource Str.AppTitle}"
+        MinWidth="920"
+        MinHeight="620"
+        Width="1080"
+        Height="720"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource Brush.Surface}">
+  <Window.Resources>
+    <BooleanToVisibilityConverter x:Key="BoolToVis" />
+  </Window.Resources>
+
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
+    <!-- Top chrome -->
+    <Border Grid.Row="0" Background="{DynamicResource Brush.Card}" Padding="14,10"
+            BorderBrush="{DynamicResource Brush.Border}" BorderThickness="0,0,0,1">
+      <Grid>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+          <ToggleButton x:Name="MenuBtn" Style="{StaticResource GhostToggle}" Content="☰"
+                        IsChecked="{Binding MenuOpen, Mode=TwoWay}" />
+          <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" FontSize="18" FontWeight="SemiBold"
+                     Foreground="{DynamicResource Brush.Text}"
+                     Text="{DynamicResource Str.AppTitle}" />
+        </StackPanel>
+        <Popup PlacementTarget="{Binding ElementName=MenuBtn}" Placement="Bottom" StaysOpen="False"
+               IsOpen="{Binding MenuOpen, Mode=TwoWay}" Closed="MenuPopup_OnClosed">
+          <Border CornerRadius="12" Padding="10" Background="{DynamicResource Brush.Card}"
+                  BorderBrush="{DynamicResource Brush.Border}" BorderThickness="1">
+            <Border.Effect>
+              <DropShadowEffect BlurRadius="18" ShadowDepth="2" Opacity="0.25" />
+            </Border.Effect>
+            <StackPanel MinWidth="220">
+              <TextBlock Margin="6,4,6,8" Foreground="{DynamicResource Brush.TextMuted}" FontWeight="SemiBold"
+                         Text="{DynamicResource Str.MenuShelves}" />
+              <Button HorizontalAlignment="Stretch" Margin="0,2" Padding="10,8"
+                      Content="{DynamicResource Str.NewShelf}" Command="{Binding NewShelfFromMenuCommand}" />
+            </StackPanel>
+          </Border>
+        </Popup>
+      </Grid>
+    </Border>
+
+    <!-- Body -->
+    <Grid Grid.Row="1">
+      <Border x:Name="ShelfBackdrop" />
+      <Grid>
+        <Rectangle x:Name="SurfaceTint" Fill="{DynamicResource Brush.Surface}" IsHitTestVisible="False" />
+        <Grid Margin="22">
+          <!-- Welcome -->
+          <Border CornerRadius="16" Padding="28" HorizontalAlignment="Center" VerticalAlignment="Center"
+                  MaxWidth="520"
+                  Background="{DynamicResource Brush.Card}"
+                  BorderBrush="{DynamicResource Brush.Border}" BorderThickness="1"
+                  Visibility="{Binding ShowWelcome, Converter={StaticResource BoolToVis}}">
+            <Border.Effect>
+              <DropShadowEffect BlurRadius="26" ShadowDepth="3" Opacity="0.18" />
+            </Border.Effect>
+            <StackPanel>
+              <TextBlock FontSize="22" FontWeight="SemiBold" Foreground="{DynamicResource Brush.Text}"
+                         Text="{DynamicResource Str.FirstShelfTitle}" TextAlignment="Center" TextWrapping="Wrap" />
+              <TextBlock Margin="0,10,0,0" Foreground="{DynamicResource Brush.TextMuted}" TextWrapping="Wrap"
+                         Text="{DynamicResource Str.FirstShelfHint}" TextAlignment="Center" />
+              <TextBlock Margin="0,18,0,6" Foreground="{DynamicResource Brush.TextMuted}"
+                         Text="{DynamicResource Str.ShelfName}" />
+              <TextBox FontSize="16" Padding="10" Text="{Binding WelcomeShelfName, UpdateSourceTrigger=PropertyChanged}" />
+              <StackPanel Margin="0,18,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Margin="0,0,10,0" Style="{StaticResource ChromeButton}"
+                        Content="{DynamicResource Str.Close}" Command="{Binding DismissWelcomeCommand}" />
+                <Button Style="{StaticResource AccentButton}" Content="{DynamicResource Str.Create}"
+                        Command="{Binding CreateWelcomeShelfCommand}" />
+              </StackPanel>
+            </StackPanel>
+          </Border>
+
+          <!-- Empty hint -->
+          <Border Padding="16" CornerRadius="12" HorizontalAlignment="Center" VerticalAlignment="Center"
+                  Background="{DynamicResource Brush.Card}" BorderBrush="{DynamicResource Brush.Border}"
+                  BorderThickness="1"
+                  Visibility="{Binding ShowEmptyHint, Converter={StaticResource BoolToVis}}">
+            <TextBlock MaxWidth="560" TextWrapping="Wrap" Foreground="{DynamicResource Brush.Text}"
+                       Text="{DynamicResource Str.EmptyHint}" />
+          </Border>
+
+          <!-- Shelves -->
+          <TabControl ItemsSource="{Binding Shelves}" SelectedItem="{Binding SelectedShelf}"
+                      Visibility="{Binding HasShelves, Converter={StaticResource BoolToVis}}"
+                      BorderThickness="0" Background="Transparent">
+            <TabControl.Resources>
+              <Style TargetType="TabItem">
+                <Setter Property="Padding" Value="14,8" />
+                <Setter Property="Margin" Value="0,0,6,0" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+              </Style>
+            </TabControl.Resources>
+            <TabControl.ItemTemplate>
+              <DataTemplate DataType="{x:Type vm:ShelfViewModel}">
+                <TextBlock Text="{Binding Name}" />
+              </DataTemplate>
+            </TabControl.ItemTemplate>
+            <TabControl.ContentTemplate>
+              <DataTemplate DataType="{x:Type vm:ShelfViewModel}">
+                <v:ShelfView />
+              </DataTemplate>
+            </TabControl.ContentTemplate>
+          </TabControl>
+        </Grid>
+      </Grid>
+    </Grid>
+
+    <!-- Bottom settings -->
+    <Border Grid.Row="2" Background="{DynamicResource Brush.Card}" Padding="10"
+            BorderBrush="{DynamicResource Brush.Border}" BorderThickness="0,1,0,0">
+      <Button HorizontalAlignment="Center" Style="{StaticResource ChromeButton}" FontSize="20" Content="⚙"
+              ToolTip="{DynamicResource Str.Settings}" Command="{Binding OpenSettingsCommand}" />
+    </Border>
+  </Grid>
+</Window>

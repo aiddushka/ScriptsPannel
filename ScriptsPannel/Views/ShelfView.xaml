@@ -1,0 +1,57 @@
+<UserControl x:Class="ScriptsPannel.Views.ShelfView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <UserControl.Resources>
+    <BooleanToVisibilityConverter x:Key="BoolToVis" />
+  </UserControl.Resources>
+  <DockPanel LastChildFill="True">
+    <Button DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0,0,0,16" Padding="16,12"
+            Style="{StaticResource AccentButton}" FontSize="15"
+            Content="{DynamicResource Str.AddScript}" Command="{Binding AddScriptCommand}" />
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+      <ItemsControl ItemsSource="{Binding Scripts}">
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <WrapPanel />
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <Border Width="320" Margin="0,0,14,14" Padding="14" CornerRadius="14"
+                    Background="{DynamicResource Brush.Card}" BorderBrush="{DynamicResource Brush.Border}"
+                    BorderThickness="1">
+              <Border.Effect>
+                <DropShadowEffect BlurRadius="18" ShadowDepth="2" Opacity="0.14" />
+              </Border.Effect>
+              <StackPanel>
+                <TextBlock FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource Brush.Text}"
+                           Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                  <Border Padding="8,4" CornerRadius="999" Background="#22000000">
+                    <TextBlock FontSize="12" Foreground="{DynamicResource Brush.TextMuted}"
+                               Text="{Binding RuntimeLabel}" />
+                  </Border>
+                    <Border Margin="8,0,0,0" Padding="8,4" CornerRadius="999" Background="#22000000"
+                          Visibility="{Binding Autostart, Converter={StaticResource BoolToVis}}">
+                    <TextBlock FontSize="12" Foreground="{DynamicResource Brush.TextMuted}"
+                               Text="{DynamicResource Str.AutostartBadge}" />
+                  </Border>
+                </StackPanel>
+
+                <UniformGrid Margin="0,14,0,0" Columns="3" Rows="1">
+                  <Button Margin="0,0,6,0" Padding="8,8" Style="{StaticResource ChromeButton}"
+                          Content="{DynamicResource Str.Run}" Command="{Binding RunCommand}" />
+                  <Button Margin="0,0,6,0" Padding="8,8" Style="{StaticResource ChromeButton}"
+                          Content="{DynamicResource Str.Edit}" Command="{Binding EditCommand}" />
+                  <Button Padding="8,8" Style="{StaticResource ChromeButton}"
+                          Content="{DynamicResource Str.Delete}" Command="{Binding DeleteCommand}" />
+                </UniformGrid>
+              </StackPanel>
+            </Border>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </ScrollViewer>
+  </DockPanel>
+</UserControl>

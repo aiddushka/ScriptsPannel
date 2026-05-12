@@ -1,0 +1,20 @@
+## Build
+bin/
+obj/
+out/
+publish/
+*.user
+*.suo
+.vs/
+
+## OS
+Thumbs.db
+Desktop.ini
+
+## Rider / VS Code
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+## Logs
+*.log
