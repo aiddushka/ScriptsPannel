@@ -1,5 +1,6 @@
 using System.IO;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using ScriptsPannel.Models;
@@ -16,7 +17,7 @@ public partial class MainWindow : Window
 
     public void ApplyShelfBackdrop(AppSettings s)
     {
-        if (s.Theme == UiThemeKind.CustomBackground &&
+        if (s.UseShelfBackgroundImage &&
             !string.IsNullOrWhiteSpace(s.CustomShelfBackgroundPath) &&
             File.Exists(s.CustomShelfBackgroundPath))
         {
@@ -28,9 +29,9 @@ public partial class MainWindow : Window
             ShelfBackdrop.Background = new ImageBrush(img)
             {
                 Stretch = Stretch.UniformToFill,
-                Opacity = 0.42
+                Opacity = 0.38
             };
-            SurfaceTint.Opacity = 0.86;
+            SurfaceTint.Opacity = 0.90;
         }
         else
         {
@@ -39,9 +40,10 @@ public partial class MainWindow : Window
         }
     }
 
-    private void MenuPopup_OnClosed(object sender, EventArgs e)
+    private void DrawerDismissOverlay_OnMouseDown(object sender, MouseButtonEventArgs e)
     {
-        if (DataContext is MainViewModel m)
-            m.MenuOpen = false;
+        if (DataContext is MainViewModel vm && vm.MenuOpen)
+            vm.MenuOpen = false;
+        e.Handled = true;
     }
 }

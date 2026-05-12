@@ -32,7 +32,8 @@
   <sys:String x:Key="Str.Theme">Appearance</sys:String>
   <sys:String x:Key="Str.ThemeLight">Light</sys:String>
   <sys:String x:Key="Str.ThemeDark">Dark</sys:String>
-  <sys:String x:Key="Str.ThemeCustomBg">Custom background image</sys:String>
+  <sys:String x:Key="Str.ShelfBackgroundSection">Shelf screen background</sys:String>
+  <sys:String x:Key="Str.UseShelfBackground">Show background image (light and dark themes)</sys:String>
   <sys:String x:Key="Str.BrowseBg">Background image…</sys:String>
   <sys:String x:Key="Str.ScriptsPath">Scripts data folder</sys:String>
   <sys:String x:Key="Str.BrowseFolder">Choose folder…</sys:String>
@@ -42,4 +43,18 @@
   <sys:String x:Key="Str.EditScriptTitle">Script</sys:String>
   <sys:String x:Key="Str.Error">Error</sys:String>
   <sys:String x:Key="Str.AutostartWarn">Could not register autostart. Check permissions or Task Scheduler.</sys:String>
+  <sys:String x:Key="Str.ImportShelf">Import shelf from ZIP</sys:String>
+  <sys:String x:Key="Str.ExportShelf">Export shelf to ZIP</sys:String>
+  <sys:String x:Key="Str.FileFilterZip">ScriptsPannel shelf archive (*.zip)|*.zip</sys:String>
+  <sys:String x:Key="Str.MenuRenameShelf">Rename…</sys:String>
+  <sys:String x:Key="Str.MenuDeleteShelf">Delete shelf…</sys:String>
+  <sys:String x:Key="Str.MenuExportShelf">Export to ZIP…</sys:String>
+  <sys:String x:Key="Str.RenameShelfTitle">Rename shelf</sys:String>
+  <sys:String x:Key="Str.ConfirmDeleteShelf">Delete this shelf and all its scripts? Autostart tasks for this shelf will be removed.</sys:String>
+  <sys:String x:Key="Str.RefreshApp">Refresh</sys:String>
+  <sys:String x:Key="Str.RefreshAppTooltip">Reload data, theme, and language if the UI got out of sync</sys:String>
+  <sys:String x:Key="Str.ExportFailed">Export failed.</sys:String>
+  <sys:String x:Key="Str.ImportFailed">Import failed.</sys:String>
+  <sys:String x:Key="Str.ImportInvalidArchive">This file does not look like a ScriptsPannel shelf archive (missing scripts folder).</sys:String>
+  <sys:String x:Key="Str.ImportNoScripts">The archive contains no scripts.</sys:String>
 </ResourceDictionary>

@@ -32,7 +32,8 @@
   <sys:String x:Key="Str.Theme">Стиль</sys:String>
   <sys:String x:Key="Str.ThemeLight">Светлый</sys:String>
   <sys:String x:Key="Str.ThemeDark">Тёмный</sys:String>
-  <sys:String x:Key="Str.ThemeCustomBg">Свой фон (картинка)</sys:String>
+  <sys:String x:Key="Str.ShelfBackgroundSection">Фон экрана полок</sys:String>
+  <sys:String x:Key="Str.UseShelfBackground">Показывать фоновое изображение (для светлого и тёмного стиля)</sys:String>
   <sys:String x:Key="Str.BrowseBg">Фоновое изображение…</sys:String>
   <sys:String x:Key="Str.ScriptsPath">Папка данных скриптов</sys:String>
   <sys:String x:Key="Str.BrowseFolder">Выбрать папку…</sys:String>
@@ -42,4 +43,18 @@
   <sys:String x:Key="Str.EditScriptTitle">Скрипт</sys:String>
   <sys:String x:Key="Str.Error">Ошибка</sys:String>
   <sys:String x:Key="Str.AutostartWarn">Не удалось зарегистрировать автозапуск. Проверьте права или Планировщик заданий.</sys:String>
+  <sys:String x:Key="Str.ImportShelf">Импорт полки из ZIP</sys:String>
+  <sys:String x:Key="Str.ExportShelf">Экспорт полки в ZIP</sys:String>
+  <sys:String x:Key="Str.FileFilterZip">Архив полки ScriptsPannel (*.zip)|*.zip</sys:String>
+  <sys:String x:Key="Str.MenuRenameShelf">Переименовать…</sys:String>
+  <sys:String x:Key="Str.MenuDeleteShelf">Удалить полку…</sys:String>
+  <sys:String x:Key="Str.MenuExportShelf">Экспорт в ZIP…</sys:String>
+  <sys:String x:Key="Str.RenameShelfTitle">Переименовать полку</sys:String>
+  <sys:String x:Key="Str.ConfirmDeleteShelf">Удалить полку и все её скрипты? Задачи автозапуска для этой полки будут удалены.</sys:String>
+  <sys:String x:Key="Str.RefreshApp">Обновить</sys:String>
+  <sys:String x:Key="Str.RefreshAppTooltip">Перезагрузить данные, тему и язык (если сбились настройки)</sys:String>
+  <sys:String x:Key="Str.ExportFailed">Не удалось экспортировать.</sys:String>
+  <sys:String x:Key="Str.ImportFailed">Не удалось импортировать.</sys:String>
+  <sys:String x:Key="Str.ImportInvalidArchive">Файл не похож на архив полки ScriptsPannel (нет папки scripts).</sys:String>
+  <sys:String x:Key="Str.ImportNoScripts">В архиве нет ни одного скрипта.</sys:String>
 </ResourceDictionary>

@@ -3,11 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="{DynamicResource Str.Settings}"
         Width="720"
-        Height="560"
+        Height="620"
         WindowStartupLocation="CenterOwner"
         Background="{DynamicResource Brush.Surface}">
   <Grid Margin="18">
     <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
@@ -27,40 +29,30 @@
     </ComboBox>
 
     <TextBlock Grid.Row="2" Foreground="{DynamicResource Brush.TextMuted}" Text="{DynamicResource Str.Theme}" />
-    <ComboBox Grid.Row="3" Margin="0,6,0,14" Width="360" HorizontalAlignment="Left" FontSize="14"
+    <ComboBox Grid.Row="3" Margin="0,6,0,18" Width="280" HorizontalAlignment="Left" FontSize="14"
               SelectedIndex="{Binding ThemeIndex}">
       <ComboBoxItem Content="{DynamicResource Str.ThemeLight}" />
       <ComboBoxItem Content="{DynamicResource Str.ThemeDark}" />
-      <ComboBoxItem Content="{DynamicResource Str.ThemeCustomBg}" />
     </ComboBox>
 
-    <StackPanel Grid.Row="4" Margin="0,0,0,14">
-      <StackPanel.Style>
-        <Style TargetType="StackPanel">
-          <Setter Property="Visibility" Value="Collapsed" />
-          <Style.Triggers>
-            <DataTrigger Binding="{Binding ThemeIndex}" Value="2">
-              <Setter Property="Visibility" Value="Visible" />
-            </DataTrigger>
-          </Style.Triggers>
-        </Style>
-      </StackPanel.Style>
-      <TextBlock Foreground="{DynamicResource Brush.TextMuted}" Text="{DynamicResource Str.BrowseBg}" />
-      <DockPanel Margin="0,6,0,0">
-        <Button DockPanel.Dock="Right" Margin="10,0,0,0" Padding="12,8"
-                Content="{DynamicResource Str.BrowseBg}" Command="{Binding BrowseBackgroundCommand}" />
-        <TextBox Padding="10" Text="{Binding CustomBackgroundPath, UpdateSourceTrigger=PropertyChanged}" />
-      </DockPanel>
-    </StackPanel>
+    <TextBlock Grid.Row="4" Foreground="{DynamicResource Brush.TextMuted}" FontWeight="SemiBold"
+               Text="{DynamicResource Str.ShelfBackgroundSection}" />
+    <CheckBox Grid.Row="5" Margin="0,8,0,8" FontSize="14" Foreground="{DynamicResource Brush.Text}"
+              Content="{DynamicResource Str.UseShelfBackground}" IsChecked="{Binding UseShelfBackground}" />
+    <DockPanel Grid.Row="6" Margin="0,0,0,18">
+      <Button DockPanel.Dock="Right" Margin="10,0,0,0" Padding="12,8"
+              Content="{DynamicResource Str.BrowseBg}" Command="{Binding BrowseBackgroundCommand}" />
+      <TextBox Padding="10" FontSize="13" Text="{Binding CustomBackgroundPath, UpdateSourceTrigger=PropertyChanged}" />
+    </DockPanel>
 
-    <TextBlock Grid.Row="5" Foreground="{DynamicResource Brush.TextMuted}" Text="{DynamicResource Str.ScriptsPath}" />
-    <DockPanel Grid.Row="6" Margin="0,6,0,14">
+    <TextBlock Grid.Row="7" Foreground="{DynamicResource Brush.TextMuted}" Text="{DynamicResource Str.ScriptsPath}" />
+    <DockPanel Grid.Row="8" Margin="0,6,0,14">
       <Button DockPanel.Dock="Right" Margin="10,0,0,0" Padding="12,8"
               Content="{DynamicResource Str.BrowseFolder}" Command="{Binding BrowseScriptsFolderCommand}" />
       <TextBox Padding="10" FontSize="13" Text="{Binding ScriptsPath, UpdateSourceTrigger=PropertyChanged}" />
     </DockPanel>
 
-    <StackPanel Grid.Row="8" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+    <StackPanel Grid.Row="10" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
       <Button Margin="0,0,10,0" Style="{StaticResource AccentButton}" Content="{DynamicResource Str.Save}"
               Command="{Binding SaveCommand}"
               CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />

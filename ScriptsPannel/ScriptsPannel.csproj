@@ -12,6 +12,8 @@
     <Version>0.1.0</Version>
     <Authors>ScriptsPannel</Authors>
     <Description>Панель полок и скриптов для Windows</Description>
+    <!-- Положите app.ico в папку Assets рядом с этим файлом (см. README). -->
+    <ApplicationIcon Condition="Exists('Assets\app.ico')">Assets\app.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />

@@ -1,12 +1,12 @@
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ScriptsPannel.Models;
 using ScriptsPannel.Services;
 using ScriptsPannel.Views;
-
-using ScriptsPannel;
 
 namespace ScriptsPannel.ViewModels;
 
@@ -45,6 +45,8 @@ public partial class MainViewModel : ObservableObject
 
     partial void OnWelcomeDismissedChanged(bool value) => RefreshDerived();
 
+    partial void OnSelectedShelfChanged(ShelfViewModel? value) => MenuOpen = false;
+
     [RelayCommand]
     private void DismissWelcome() => WelcomeDismissed = true;
 
@@ -73,6 +75,141 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private void ImportShelfFromMenu()
+    {
+        MenuOpen = false;
+        var dlg = new Microsoft.Win32.OpenFileDialog
+        {
+            Filter = (string)System.Windows.Application.Current.FindResource("Str.FileFilterZip")!,
+            Title = (string)System.Windows.Application.Current.FindResource("Str.ImportShelf")!
+        };
+        if (dlg.ShowDialog() != true)
+            return;
+
+        if (!ShelfArchiveService.TryImportShelfFromZip(_store, _autostart, dlg.FileName, out var info, out var err))
+        {
+            var msg = err switch
+            {
+                "invalid_archive" => (string)System.Windows.Application.Current.FindResource("Str.ImportInvalidArchive")!,
+                "no_scripts_in_archive" => (string)System.Windows.Application.Current.FindResource("Str.ImportNoScripts")!,
+                _ => string.IsNullOrWhiteSpace(err)
+                    ? (string)System.Windows.Application.Current.FindResource("Str.ImportFailed")!
+                    : (string)System.Windows.Application.Current.FindResource("Str.ImportFailed")! + "\n" + err
+            };
+            System.Windows.MessageBox.Show(msg,
+                (string)System.Windows.Application.Current.FindResource("Str.Error")!,
+                System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+            return;
+        }
+
+        ReloadStoreFromDisk();
+        if (info != null)
+            SelectedShelf = Shelves.FirstOrDefault(s => s.Id == info.Id) ?? Shelves.FirstOrDefault();
+    }
+
+    [RelayCommand]
+    private void ExportShelf(ShelfViewModel? shelf)
+    {
+        shelf ??= SelectedShelf;
+        if (shelf == null)
+            return;
+        MenuOpen = false;
+        var dlg = new Microsoft.Win32.SaveFileDialog
+        {
+            Filter = (string)System.Windows.Application.Current.FindResource("Str.FileFilterZip")!,
+            FileName = SanitizeFileName(shelf.Name) + ".zip",
+            Title = (string)System.Windows.Application.Current.FindResource("Str.ExportShelf")!
+        };
+        if (dlg.ShowDialog() != true)
+            return;
+        try
+        {
+            ShelfArchiveService.ExportShelfToZip(_store, shelf.Id, shelf.Name, dlg.FileName);
+        }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show(
+                (string)System.Windows.Application.Current.FindResource("Str.ExportFailed")! + "\n" + ex.Message,
+                (string)System.Windows.Application.Current.FindResource("Str.Error")!,
+                System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+        }
+    }
+
+    [RelayCommand]
+    private void RenameShelf(ShelfViewModel? shelf)
+    {
+        shelf ??= SelectedShelf;
+        if (shelf == null)
+            return;
+        MenuOpen = false;
+        var dlg = new PromptWindow(
+            (string)System.Windows.Application.Current.FindResource("Str.RenameShelfTitle")!,
+            (string)System.Windows.Application.Current.FindResource("Str.ShelfName")!,
+            shelf.Name,
+            okButtonIsSave: true)
+        {
+            Owner = System.Windows.Application.Current.MainWindow
+        };
+        if (dlg.ShowDialog() != true)
+            return;
+        var newName = dlg.ResultText.Trim();
+        if (string.IsNullOrWhiteSpace(newName) || newName == shelf.Name)
+            return;
+
+        var idx = _store.LoadIndex();
+        var si = idx.Shelves.FirstOrDefault(s => s.Id == shelf.Id);
+        if (si == null)
+            return;
+        si.Name = newName;
+        _store.SaveIndex(idx);
+        shelf.Name = newName;
+    }
+
+    [RelayCommand]
+    private void DeleteShelf(ShelfViewModel? shelf)
+    {
+        shelf ??= SelectedShelf;
+        if (shelf == null)
+            return;
+        MenuOpen = false;
+        var confirm = (string)System.Windows.Application.Current.FindResource("Str.ConfirmDeleteShelf")!;
+        var r = System.Windows.MessageBox.Show(confirm + "\n\n" + shelf.Name,
+            (string)System.Windows.Application.Current.FindResource("Str.AppTitle")!,
+            System.Windows.MessageBoxButton.OKCancel, System.Windows.MessageBoxImage.Warning);
+        if (r != System.Windows.MessageBoxResult.OK)
+            return;
+
+        foreach (var e in _store.LoadScripts(shelf.Id))
+        {
+            var tn = WindowsAutostartTaskService.FullTaskName(shelf.Id.ToString("N"), e.Id.ToString("N"));
+            _autostart.TryUnregister(tn);
+        }
+
+        var dir = _store.ShelfDirectory(shelf.Id);
+        if (Directory.Exists(dir))
+            Directory.Delete(dir, recursive: true);
+
+        var idx = _store.LoadIndex();
+        idx.Shelves.RemoveAll(s => s.Id == shelf.Id);
+        _store.SaveIndex(idx);
+        Shelves.Remove(shelf);
+        if (SelectedShelf == shelf)
+            SelectedShelf = Shelves.FirstOrDefault();
+    }
+
+    [RelayCommand]
+    private void RefreshApplication()
+    {
+        MenuOpen = false;
+        ReloadStoreFromDisk();
+        var s = _settings.Load();
+        ThemeApplier.ApplyLanguage(s.Language);
+        ThemeApplier.ApplyThemeResources(ThemeApplier.ToLightDark(s.Theme));
+        if (System.Windows.Application.Current.MainWindow is MainWindow mw)
+            mw.ApplyShelfBackdrop(s);
+    }
+
+    [RelayCommand]
     private void OpenSettings()
     {
         MenuOpen = false;
@@ -81,7 +218,7 @@ public partial class MainViewModel : ObservableObject
             ReloadStoreFromDisk();
             var s = _settings.Load();
             ThemeApplier.ApplyLanguage(s.Language);
-            ThemeApplier.ApplyThemeResources(s.Theme);
+            ThemeApplier.ApplyThemeResources(ThemeApplier.ToLightDark(s.Theme));
             if (System.Windows.Application.Current.MainWindow is MainWindow mw)
                 mw.ApplyShelfBackdrop(s);
         });
@@ -116,5 +253,13 @@ public partial class MainViewModel : ObservableObject
         Shelves.Add(vm);
         SelectedShelf = vm;
         WelcomeDismissed = true;
+    }
+
+    private static string SanitizeFileName(string name)
+    {
+        var invalid = Path.GetInvalidFileNameChars();
+        var chars = name.Select(c => invalid.Contains(c) ? '_' : c).ToArray();
+        var s = new string(chars).Trim();
+        return string.IsNullOrWhiteSpace(s) ? "shelf" : s;
     }
 }

@@ -19,8 +19,8 @@
     <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
       <Button Margin="0,0,10,0" Style="{StaticResource ChromeButton}" Content="{DynamicResource Str.Cancel}"
               IsCancel="True" Click="Cancel_Click" />
-      <Button Style="{StaticResource AccentButton}" Content="{DynamicResource Str.Create}" IsDefault="True"
-              Click="Ok_Click" />
+      <Button x:Name="OkBtn" Style="{StaticResource AccentButton}" Content="{DynamicResource Str.Create}"
+              IsDefault="True" Click="Ok_Click" />
     </StackPanel>
   </Grid>
 </Window>

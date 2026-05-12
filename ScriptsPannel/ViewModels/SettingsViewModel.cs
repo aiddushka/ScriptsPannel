@@ -15,6 +15,7 @@ public partial class SettingsViewModel : ObservableObject
 
     [ObservableProperty] private string _language = "ru";
     [ObservableProperty] private int _themeIndex;
+    [ObservableProperty] private bool _useShelfBackground;
     [ObservableProperty] private string _scriptsPath = "";
     [ObservableProperty] private string? _customBackgroundPath;
 
@@ -24,12 +25,10 @@ public partial class SettingsViewModel : ObservableObject
         _onSaved = onSaved;
         var s = settings.Load();
         Language = string.IsNullOrWhiteSpace(s.Language) ? "ru" : s.Language!;
-        ThemeIndex = s.Theme switch
-        {
-            UiThemeKind.Dark => 1,
-            UiThemeKind.CustomBackground => 2,
-            _ => 0
-        };
+        ThemeIndex = s.Theme == UiThemeKind.Dark ? 1 : 0;
+        if (s.Theme == UiThemeKind.CustomBackground)
+            ThemeIndex = 1;
+        UseShelfBackground = s.UseShelfBackgroundImage || s.Theme == UiThemeKind.CustomBackground;
         ScriptsPath = string.IsNullOrWhiteSpace(s.ScriptsDataRoot)
             ? AppPaths.DefaultDataRoot
             : s.ScriptsDataRoot!;
@@ -68,20 +67,16 @@ public partial class SettingsViewModel : ObservableObject
             return;
         }
 
-        var theme = ThemeIndex switch
-        {
-            1 => UiThemeKind.Dark,
-            2 => UiThemeKind.CustomBackground,
-            _ => UiThemeKind.Light
-        };
+        var theme = ThemeIndex == 1 ? UiThemeKind.Dark : UiThemeKind.Light;
         var settings = new AppSettings
         {
             Language = Language.Trim().ToLowerInvariant(),
             Theme = theme,
-            ScriptsDataRoot = ScriptsPath.Trim(),
+            UseShelfBackgroundImage = UseShelfBackground,
             CustomShelfBackgroundPath = string.IsNullOrWhiteSpace(CustomBackgroundPath)
                 ? null
-                : CustomBackgroundPath
+                : CustomBackgroundPath,
+            ScriptsDataRoot = ScriptsPath.Trim()
         };
         _settings.Save(settings);
         _onSaved();

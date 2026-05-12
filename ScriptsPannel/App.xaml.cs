@@ -13,7 +13,7 @@ public partial class App : System.Windows.Application
         var settings = new SettingsService();
         var s = settings.Load();
         ThemeApplier.ApplyLanguage(s.Language);
-        ThemeApplier.ApplyThemeResources(s.Theme);
+        ThemeApplier.ApplyThemeResources(ThemeApplier.ToLightDark(s.Theme));
         var main = new MainWindow
         {
             DataContext = new MainViewModel(settings, new WindowsAutostartTaskService())
